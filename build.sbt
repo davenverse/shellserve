@@ -55,6 +55,8 @@ ThisBuild / githubWorkflowPublish ++= Seq(
 )
 
 ThisBuild / tlCiMimaBinaryIssueCheck  := false
+ThisBuild / tlMimaPreviousVersions := Set.empty
+// ThisBuild / mimaPreviousArtifacts := Set()
 
 val catsV = "2.7.0"
 val catsEffectV = "3.3.12"
