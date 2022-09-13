@@ -211,6 +211,7 @@ jobs:
         run: sbt '++${{ matrix.scala }}' tlRelease
 
       - name: Publish artifacts to npm
+        if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v')
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: sbt '++${{ matrix.scala }}' npmPackageNpmrc npmPackagePublish
