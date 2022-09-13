@@ -48,7 +48,8 @@ ThisBuild / githubWorkflowPublish ++= Seq(
     name = Some("Publish artifacts to npm"),
     env = Map(
       "NPM_TOKEN" -> "${{ secrets.NPM_TOKEN }}" // https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow#set-the-token-as-an-environment-variable-on-the-cicd-server
-    )
+    ),
+    cond = Some("github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v')")
   )
 )
 
