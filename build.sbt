@@ -42,6 +42,7 @@ ThisBuild / githubWorkflowPublishPreamble ++= Seq(
   )
 )
 
+
 ThisBuild / githubWorkflowPublish ++= Seq(
   WorkflowStep.Sbt(
     List("coreJS/npmPackageNpmrc", "npmPackagePublish"),
@@ -52,6 +53,8 @@ ThisBuild / githubWorkflowPublish ++= Seq(
     cond = Some("github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v'))")
   )
 )
+
+ThisBuild / tlCiMimaBinaryIssueCheck  := false
 
 val catsV = "2.7.0"
 val catsEffectV = "3.3.12"
