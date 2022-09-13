@@ -21,13 +21,15 @@ ThisBuild / githubWorkflowBuildPreamble ++= Seq(WorkflowStep.Use(
   UseRef.Public("actions", "setup-node", "v1"),
   Map(
     "node-version" -> "14"
-  )
+  ),
+  cond = Some("matrix.project == 'rootJS'")
 ))
 
 ThisBuild / githubWorkflowBuild ++= Seq(
   WorkflowStep.Sbt(
     List("npmPackageInstall"),
     name = Some("Install artifacts to npm"),
+    cond = Some("matrix.project == 'rootJS'")
   )
 )
 
