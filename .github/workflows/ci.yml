@@ -66,7 +66,8 @@ jobs:
             ~/Library/Caches/Coursier/v1
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - uses: actions/setup-node@v1
+      - if: matrix.project == 'rootJS'
+        uses: actions/setup-node@v1
         with:
           node-version: 14
 
@@ -89,6 +90,7 @@ jobs:
         run: sbt 'project ${{ matrix.project }}' '++${{ matrix.scala }}' doc
 
       - name: Install artifacts to npm
+        if: matrix.project == 'rootJS'
         run: sbt 'project ${{ matrix.project }}' '++${{ matrix.scala }}' npmPackageInstall
 
       - name: Make target directories
