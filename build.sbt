@@ -44,7 +44,7 @@ ThisBuild / githubWorkflowPublishPreamble ++= Seq(
 
 ThisBuild / githubWorkflowPublish ++= Seq(
   WorkflowStep.Sbt(
-    List("npmPackageNpmrc", "npmPackagePublish"),
+    List("coreJS/npmPackageNpmrc", "npmPackagePublish"),
     name = Some("Publish artifacts to npm"),
     env = Map(
       "NPM_TOKEN" -> "${{ secrets.NPM_TOKEN }}" // https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow#set-the-token-as-an-environment-variable-on-the-cicd-server
@@ -52,6 +52,11 @@ ThisBuild / githubWorkflowPublish ++= Seq(
     cond = Some("github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v'))")
   )
 )
+
+ThisBuild / jsEnv := {
+  import org.scalajs.jsenv.nodejs.NodeJSEnv
+  new NodeJSEnv(NodeJSEnv.Config().withArgs("date" :: Nil))
+}
 
 val catsV = "2.7.0"
 val catsEffectV = "3.3.12"
@@ -96,6 +101,7 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
       "shell",
     ),
     npmPackageBinaryEnable := true,
+    scalaJSUseMainModuleInitializer := true,
 
     npmPackageStage := org.scalajs.sbtplugin.Stage.FullOpt,
     npmPackageAdditionalNpmConfig := {
