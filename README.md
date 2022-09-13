@@ -4,11 +4,14 @@
 
 ## Quick Start
 
-To use shellserve in an existing SBT project with Scala 2.13 or a later version, add the following dependencies to your
-`build.sbt` depending on your needs:
+To use shellserve install with
 
-```scala
-libraryDependencies ++= Seq(
-  "io.chrisdavenport" %% "shellserve" % "<version>"
-)
+```
+npm i --global shellserve
+```
+
+Then use like below, date can be any command you want to execute on each request.
+
+```
+shellserve date
 ```

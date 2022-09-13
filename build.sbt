@@ -12,7 +12,7 @@ ThisBuild / tlSonatypeUseLegacyHost := true
 
 val Scala213 = "2.13.7"
 
-ThisBuild / crossScalaVersions := Seq("2.12.15", Scala213)
+ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion := Scala213
 
 ThisBuild / testFrameworks += new TestFramework("munit.Framework")
@@ -52,11 +52,6 @@ ThisBuild / githubWorkflowPublish ++= Seq(
     cond = Some("github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v'))")
   )
 )
-
-ThisBuild / jsEnv := {
-  import org.scalajs.jsenv.nodejs.NodeJSEnv
-  new NodeJSEnv(NodeJSEnv.Config().withArgs("date" :: Nil))
-}
 
 val catsV = "2.7.0"
 val catsEffectV = "3.3.12"
