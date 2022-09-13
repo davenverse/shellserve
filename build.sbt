@@ -95,6 +95,7 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
       "http",
       "shell",
     ),
+    npmPackageBinaryEnable := true,
 
     npmPackageStage := org.scalajs.sbtplugin.Stage.FullOpt,
     npmPackageAdditionalNpmConfig := {
