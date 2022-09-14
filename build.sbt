@@ -56,7 +56,22 @@ ThisBuild / githubWorkflowPublish ++= Seq(
 
 ThisBuild / tlCiMimaBinaryIssueCheck  := false
 ThisBuild / tlMimaPreviousVersions := Set.empty
-// ThisBuild / mimaPreviousArtifacts := Set()
+
+ThisBuild / npmPackageAuthor := "Christopher Davenport"
+ThisBuild / npmPackageDescription := "shellserve is used to easily give shells scripts http access similar to cgi-bin but from command line."
+ThisBuild / npmPackageKeywords := Seq(
+      "http",
+      "shell",
+    )
+ThisBuild / npmPackageBinaryEnable := true
+ThisBuild / npmPackageStage := org.scalajs.sbtplugin.Stage.FullOpt
+ThisBuild / npmPackageAdditionalNpmConfig := {
+      Map(
+        "bin" -> _root_.io.circe.Json.obj(
+          "shellserve" -> _root_.io.circe.Json.fromString("main.js")
+        )
+      )
+    }
 
 val catsV = "2.7.0"
 val catsEffectV = "3.3.12"
@@ -94,23 +109,7 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
     _.enablePlugins(NpmPackagePlugin)
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule)},
-    npmPackageAuthor := "Christopher Davenport",
-    npmPackageDescription := "shellserve is used to easily give shells scripts http access similar to cgi-bin but from command line.",
-    npmPackageKeywords := Seq(
-      "http",
-      "shell",
-    ),
-    npmPackageBinaryEnable := true,
     scalaJSUseMainModuleInitializer := true,
-
-    npmPackageStage := org.scalajs.sbtplugin.Stage.FullOpt,
-    npmPackageAdditionalNpmConfig := {
-      Map(
-        "bin" -> _root_.io.circe.Json.obj(
-          "shellserve" -> _root_.io.circe.Json.fromString("main.js")
-        )
-      )
-    }
   )
 
 lazy val site = project.in(file("site"))
