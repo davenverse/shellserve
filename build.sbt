@@ -59,7 +59,7 @@ ThisBuild / tlMimaPreviousVersions := Set.empty
 // ThisBuild / mimaPreviousArtifacts := Set()
 
 val catsV = "2.7.0"
-val catsEffectV = "3.3.12"
+val catsEffectV = "3.3.14"
 val fs2V = "3.2.7"
 val http4sV = "0.23.12"
 val circeV = "0.14.2"
