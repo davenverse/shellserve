@@ -60,7 +60,7 @@ ThisBuild / tlMimaPreviousVersions := Set.empty
 
 val catsV = "2.7.0"
 val catsEffectV = "3.3.12"
-val fs2V = "3.2.7"
+val fs2V = "3.2.14"
 val http4sV = "0.23.12"
 val circeV = "0.14.2"
 val doobieV = "1.0.0-RC2"
