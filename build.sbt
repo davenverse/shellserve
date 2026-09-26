@@ -84,7 +84,7 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
       "co.fs2"                      %%% "fs2-io"                     % fs2V,
 
       "org.http4s"                  %%% "http4s-ember-server"        % http4sV,
-      "io.chrisdavenport"           %%% "process" % "0.0.2",
+      "io.chrisdavenport"           %%% "process" % "0.2.0",
 
       "org.typelevel"               %%% "munit-cats-effect"        % munitCatsEffectV         % Test,
 
