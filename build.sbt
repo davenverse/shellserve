@@ -1,3 +1,5 @@
+import org.typelevel.sbt.gha.{PermissionValue, Permissions}
+
 ThisBuild / tlBaseVersion := "0.0" // your current series x.y
 
 ThisBuild / organization := "io.chrisdavenport"
@@ -16,10 +18,15 @@ ThisBuild / scalaVersion := Scala213
 
 ThisBuild / testFrameworks += new TestFramework("munit.Framework")
 
+// npm trusted publishing (OIDC) needs Node >= 22.14 and npm >= 11.5.1, so the
+// old setup-node@v1 on Node 14 is far below the floor.
+val NodeVersion = "24"
+
 ThisBuild / githubWorkflowBuildPreamble ++= Seq(WorkflowStep.Use(
-  UseRef.Public("actions", "setup-node", "v1"),
+  UseRef.Public("actions", "setup-node", "v6"),
   Map(
-    "node-version" -> "14"
+    "node-version" -> NodeVersion,
+    "registry-url" -> "https://registry.npmjs.org"
   ),
   cond = Some("matrix.project == 'rootJS'")
 ))
@@ -34,24 +41,46 @@ ThisBuild / githubWorkflowBuild ++= Seq(
 
 ThisBuild / githubWorkflowPublishPreamble ++= Seq(
   WorkflowStep.Use(
-    UseRef.Public("actions", "setup-node", "v1"),
+    UseRef.Public("actions", "setup-node", "v6"),
     Map(
-      "node-version" -> "14",
-    ),
+      "node-version" -> NodeVersion,
+      "registry-url" -> "https://registry.npmjs.org"
+    )
+  ),
+  // Node 24 does not always ship npm >= 11.5.1, which is the floor for trusted
+  // publishing. Pinning to latest keeps this independent of what Node bundles.
+  WorkflowStep.Run(
+    List("npm install -g npm@latest"),
+    name = Some("Upgrade npm for trusted publishing")
   )
 )
 
 
 ThisBuild / githubWorkflowPublish ++= Seq(
   WorkflowStep.Sbt(
-    List("coreJS/npmPackageNpmrc", "npmPackagePublish"),
+    List("npmPackagePublish"),
     name = Some("Publish artifacts to npm"),
-    env = Map(
-      "NPM_TOKEN" -> "${{ secrets.NPM_TOKEN }}" // https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow#set-the-token-as-an-environment-variable-on-the-cicd-server
-    ),
     cond = Some("github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v'))")
   )
 )
+
+// Trusted publishing authenticates over OIDC, so the publish job needs an id
+// token. contents:read is for the checkout and actions:read is for
+// download-artifact, which is invoked with an explicit run-id and so goes
+// through the API rather than the run-local artifact service.
+ThisBuild / githubWorkflowGeneratedCI ~= {
+  _.map { job =>
+    if (job.id == "publish")
+      job.withPermissions(
+        Some(
+          Permissions.Specify.defaultRestrictive
+            .withActions(PermissionValue.Read)
+            .withIdToken(PermissionValue.Write)
+        )
+      )
+    else job
+  }
+}
 
 ThisBuild / tlCiMimaBinaryIssueCheck  := false
 ThisBuild / tlMimaPreviousVersions := Set.empty
@@ -94,6 +123,10 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule)},
     npmPackageAuthor := "Christopher Davenport",
+    // Defaults to the git remote, which is the ssh form locally and the https
+    // form in CI. Trusted publishing matches package.json's repository against
+    // the GitHub repo, so pin it rather than let it vary by checkout.
+    npmPackageRepository := Some("https://github.com/davenverse/shellserve"),
     npmPackageDescription := "shellserve is used to easily give shells scripts http access similar to cgi-bin but from command line.",
     npmPackageKeywords := Seq(
       "http",
