@@ -57,13 +57,13 @@ ThisBuild / tlCiMimaBinaryIssueCheck  := false
 ThisBuild / tlMimaPreviousVersions := Set.empty
 // ThisBuild / mimaPreviousArtifacts := Set()
 
-val catsV = "2.7.0"
-val catsEffectV = "3.3.12"
-val fs2V = "3.2.7"
-val http4sV = "0.23.12"
+val catsV = "2.13.0"
+val catsEffectV = "3.7.1"
+val fs2V = "3.14.0"
+val http4sV = "0.23.37"
 val circeV = "0.14.2"
 val doobieV = "1.0.0-RC2"
-val munitCatsEffectV = "1.0.7"
+val munitCatsEffectV = "2.2.1"
 
 
 // Projects
@@ -86,7 +86,7 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
       "org.http4s"                  %%% "http4s-ember-server"        % http4sV,
       "io.chrisdavenport"           %%% "process" % "0.0.2",
 
-      "org.typelevel"               %%% "munit-cats-effect-3"        % munitCatsEffectV         % Test,
+      "org.typelevel"               %%% "munit-cats-effect"        % munitCatsEffectV         % Test,
 
     )
   ).jsConfigure(
